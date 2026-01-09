@@ -1,0 +1,63 @@
+<?php
+require 'vendor/autoload.php';
+
+use Aws\DynamoDb\DynamoDbClient;
+
+$client = new DynamoDbClient([
+    'region'  => 'ap-southeast-1',
+    'version' => 'latest'
+]);
+
+$result = $client->scan([
+    'TableName' => 'project-assignment-table'
+]);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        a {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #007BFF;
+        }
+    </style>
+</head>
+
+<body>
+
+<a href="index.html">← Back to Form</a>
+
+<h2>Saved Projects</h2>
+
+<?php
+if (count($result['Items']) === 0) {
+    echo "<p>No projects found.</p>";
+}
+
+foreach ($result['Items'] as $item) {
+    echo "<div class='card'>";
+    echo "<h3>" . $item['ProjectName']['S'] . "</h3>";
+    echo "<p>" . $item['Description']['S'] . "</p>";
+    echo "</div>";
+}
+?>
+
+</body>
+</html>
